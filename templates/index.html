@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Trending Books{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-extrabold text-white mb-6">Trending Now</h1>
+
+<!-- Horizontal Scroll Container -->
+<div class="flex overflow-x-auto space-x-6 pb-6 scroll-container">
+    {% for book in books %}
+    <a href="{{ url_for('book_detail', book_id=book.id) }}" class="flex-shrink-0 w-64 block group">
+        <div class="bg-gray-800 rounded-lg shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-300 h-full flex flex-col justify-between">
+            <!-- Book "Cover" area -->
+            <div class="relative h-72 w-full bg-gray-700 p-4 flex items-end justify-start">
+                <!-- Genre Tag -->
+                <span class="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full opacity-90">
+                    {{ book.genre }}
+                </span>
+                
+                <!-- Number Overlay (Like the image) -->
+                <span class="absolute inset-0 flex items-center justify-center text-[10rem] font-black text-gray-900 opacity-20">
+                    {{ loop.index }}
+                </span>
+                
+                <!-- Book Title/Author -->
+                <div class="relative z-10 p-2 bg-gray-900 bg-opacity-70 rounded-md w-full">
+                    <h2 class="text-lg font-bold text-white line-clamp-2">{{ book.title }}</h2>
+                    <p class="text-xs text-gray-400">by {{ book.author }}</p>
+                </div>
+            </div>
+
+            <!-- Footer Details -->
+            <div class="p-3 flex items-center justify-between text-sm border-t border-gray-700">
+                <div class="flex items-center">
+                    <span class="text-yellow-500 text-base mr-1">★</span>
+                    {% if book.avg_rating %}
+                        <span class="text-gray-300 font-semibold">{{ "%.1f" | format(book.avg_rating) }}</span>
+                        <span class="text-gray-500 ml-1">({{ book.review_count }})</span>
+                    {% else %}
+                        <span class="text-gray-500">New</span>
+                    {% endif %}
+                </div>
+                <span class="text-red-500 font-medium">Read →</span>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
+<!-- Additional Section (Mocked) -->
+<h1 class="text-3xl font-extrabold text-white mt-10 mb-6">More to Explore</h1>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-gray-900 p-6 rounded-xl border-t-4 border-red-600">
+        <h3 class="text-xl font-bold text-white mb-2">Dive Deeper</h3>
+        <p class="text-gray-400">Search and filter our massive catalog by author, genre, or rating.</p>
+    </div>
+    <div class="bg-gray-900 p-6 rounded-xl border-t-4 border-red-600">
+        <h3 class="text-xl font-bold text-white mb-2">Personalized</h3>
+        <p class="text-gray-400">Get recommendations based purely on your past 5-star reviews.</p>
+    </div>
+    <div class="bg-gray-900 p-6 rounded-xl border-t-4 border-red-600">
+        <h3 class="text-xl font-bold text-white mb-2">Community Reviews</h3>
+        <p class="text-gray-400">See what other readers are saying about your next favorite book.</p>
+    </div>
+    <div class="bg-gray-900 p-6 rounded-xl border-t-4 border-red-600">
+        <h3 class="text-xl font-bold text-white mb-2">Mobile Ready</h3>
+        <p class="text-gray-400">Enjoy reading and reviewing from any device, anywhere.</p>
+    </div>
+</div>
+{% endblock %}

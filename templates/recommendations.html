@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Your Personalized Recommendations{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-extrabold text-white mb-6 border-b border-gray-700 pb-2">
+    🌟 Your Personalized Recommendations
+</h1>
+
+<div class="bg-gray-900 p-4 rounded-lg mb-6 border border-gray-700">
+    <p class="text-gray-300">
+        We analyzed your favorite genres (based on 4 and 5-star ratings) to bring you these suggestions.
+    </p>
+</div>
+
+{% if recommended_books %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {% for book in recommended_books %}
+        <a href="{{ url_for('book_detail', book_id=book.id) }}" class="block group">
+            <div class="bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 h-full flex flex-col justify-between border-t-4 border-red-600">
+                <div>
+                    <span class="inline-block bg-red-700 text-white text-xs font-medium px-3 py-1 rounded-full mb-3">{{ book.genre }}</span>
+                    <h2 class="text-xl font-bold text-white group-hover:text-red-500 transition-colors">{{ book.title }}</h2>
+                    <p class="text-sm text-gray-400 mt-1 mb-3">by {{ book.author }}</p>
+                    <p class="text-gray-400 text-sm line-clamp-3">{{ book.description }}</p>
+                </div>
+                
+                <div class="mt-4 pt-3 border-t border-gray-700 flex items-center justify-between">
+                    <div class="flex items-center">
+                        <span class="text-yellow-500 text-lg mr-1">★</span>
+                        {% if book.avg_rating %}
+                            <span class="text-lg font-semibold text-gray-300">{{ "%.1f" | format(book.avg_rating) }}</span>
+                            <span class="text-sm text-gray-500 ml-1">Avg Rating</span>
+                        {% else %}
+                            <span class="text-sm text-gray-500">Unrated</span>
+                        {% endif %}
+                    </div>
+                    <span class="text-red-500 font-medium text-sm">Review Now →</span>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center p-12 bg-gray-800 rounded-xl shadow-lg border border-gray-700">
+        <p class="text-xl text-gray-400 font-medium mb-4">
+            You need to rate more books (4 or 5 stars) to help us personalize your recommendations!
+        </p>
+        <p class="text-gray-500">
+            Start by reviewing some books from the 
+            <a href="{{ url_for('index') }}" class="text-red-500 hover:underline font-semibold">Browse All</a> page.
+        </p>
+    </div>
+{% endif %}
+{% endblock %}

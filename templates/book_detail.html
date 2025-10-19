@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Book Info Section (Span 2 columns) -->
+    <div class="lg:col-span-2 bg-white p-8 rounded-xl shadow-xl">
+        <span class="inline-block bg-indigo-100 text-indigo-600 text-sm font-medium px-3 py-1 rounded-full mb-4">{{ book.genre }}</span>
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-2">{{ book.title }}</h1>
+        <p class="text-xl text-gray-600 mb-6">by <span class="font-semibold">{{ book.author }}</span></p>
+        
+        <h2 class="text-2xl font-bold text-gray-800 mb-3 border-b pb-2">Description</h2>
+        <p class="text-gray-700 leading-relaxed mb-8">{{ book.description }}</p>
+
+        <!-- Review Submission Form -->
+        {% if current_user.is_authenticated %}
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">
+                {% if user_review %}Edit Your Review{% else %}Submit a Review{% endif %}
+            </h2>
+            <form method="POST" class="bg-gray-50 p-6 rounded-lg border">
+                <div class="mb-4">
+                    <label for="rating" class="block text-sm font-medium text-gray-700 mb-1">Your Rating (1-5)</label>
+                    <input type="number" id="rating" name="rating" required min="1" max="5" 
+                           value="{{ user_review.rating if user_review else '5' }}"
+                           class="w-full max-w-[100px] px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div class="mb-6">
+                    <label for="review_text" class="block text-sm font-medium text-gray-700 mb-1">Review Text (Optional)</label>
+                    <textarea id="review_text" name="review_text" rows="4"
+                              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                    >{{ user_review.review_text if user_review else '' }}</textarea>
+                </div>
+                <button type="submit"
+                        class="bg-indigo-600 text-white py-2 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition duration-150 ease-in-out">
+                    {% if user_review %}Update Review{% else %}Post Review{% endif %}
+                </button>
+            </form>
+        {% else %}
+            <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200 text-yellow-800">
+                <p>
+                    <a href="{{ url_for('login', next=url_for('book_detail', book_id=book.id)) }}" class="font-semibold text-yellow-700 hover:underline">
+                        Log in
+                    </a> to submit or view your review for this book.
+                </p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Reviews Section (Column 3) -->
+    <div class="lg:col-span-1">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4 pb-2 border-b-2">Reader Reviews ({{ reviews | length }})</h2>
+        
+        <div class="space-y-6">
+            {% if reviews %}
+                {% for review in reviews %}
+                <div class="bg-white p-4 rounded-lg shadow-md border-l-4 border-gray-200">
+                    <div class="flex justify-between items-start mb-2">
+                        <p class="font-semibold text-indigo-700">{{ review.username }}</p>
+                        <div class="text-yellow-500 font-bold flex items-center">
+                            <span class="text-xl">★</span><span class="ml-1 text-lg">{{ review.rating }}/5</span>
+                        </div>
+                    </div>
+                    {% if review.review_text %}
+                        <p class="text-gray-700 text-sm italic">{{ review.review_text }}</p>
+                    {% else %}
+                        <p class="text-gray-500 text-sm">No text review provided.</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center text-gray-500 p-8 bg-white rounded-lg shadow-inner">
+                    <p>Be the first to leave a review!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

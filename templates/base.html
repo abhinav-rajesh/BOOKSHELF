@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BookShelf AI{% endblock %}</title>
+    <!-- Load Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Dark background */
+            background-color: #0d1117; 
+            color: #e6e6e6;
+        }
+        .container {
+            max-width: 1400px; /* Wider container for better row viewing */
+        }
+        /* Custom scrollbar for horizontal lists */
+        .scroll-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        .scroll-container::-webkit-scrollbar-thumb {
+            background: #4a5568;
+            border-radius: 4px;
+        }
+        .scroll-container::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Navigation Bar (Dark Theme) -->
+    <nav class="bg-gray-900 shadow-xl sticky top-0 z-10">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo/Home Link -->
+                <div class="flex-shrink-0">
+                    <a href="{{ url_for('index') }}" class="text-red-500 text-2xl font-black tracking-wider rounded-md px-3 py-2 transition duration-150 ease-in-out">
+                        BOOKSHELF 
+                    </a>
+                </div>
+                
+                <!-- Main Links -->
+                <div class="flex items-center space-x-4">
+                    <a href="{{ url_for('index') }}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out">
+                        Browse All
+                    </a>
+                    
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('recommendations') }}" class="bg-red-600 text-white hover:bg-red-700 px-3 py-2 rounded-md text-sm font-semibold transition duration-150 ease-in-out shadow-lg">
+                            My Shelf
+                        </a>
+                        <span class="text-gray-400 text-sm hidden md:inline">
+                            Hi, {{ current_user.username }}
+                        </span>
+                        <a href="{{ url_for('logout') }}" class="text-gray-400 hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out">
+                            Logout
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="text-gray-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out">
+                            Login
+                        </a>
+                        <a href="{{ url_for('register') }}" class="bg-red-600 text-white hover:bg-red-700 px-3 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out">
+                            Sign Up
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages Container -->
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="space-y-2">
+                {% for category, message in messages %}
+                    {% set color = 'bg-green-900 border-green-600 text-green-300' if category == 'success' else 'bg-red-900 border-red-600 text-red-300' if category == 'error' else 'bg-yellow-900 border-yellow-600 text-yellow-300' %}
+                    <div class="p-3 border rounded-lg shadow-md {{ color }}" role="alert">
+                        <span class="block sm:inline">{{ message }}</span>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content Block -->
+    <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-500 text-center py-4 mt-auto border-t border-gray-800">
+        <p>&copy; 2025 BookShelf  - The Future of Reading.</p>
+    </footer>
+
+</body>
+</html>
